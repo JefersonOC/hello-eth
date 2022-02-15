@@ -2,7 +2,7 @@ import json
 from web3 import Web3, HTTPProvider
 
 # truffle development blockchain address
-blockchain_address = 'http://127.0.0.1:9545'
+blockchain_address = 'http://127.0.0.1:8545'
 # Client instance to interact with the blockchain
 web3 = Web3(HTTPProvider(blockchain_address))
 # Set the default account (so we don't need to set the "from" for every transaction call)
@@ -11,7 +11,7 @@ web3.eth.defaultAccount = web3.eth.accounts[0]
 # Path to the compiled contract JSON file
 compiled_contract_path = 'build/contracts/HelloWorld.json'
 # Deployed contract address (see `migrate` command output: `contract address`)
-deployed_contract_address = '0x3D33f4a63343285376a2A78F25328bdeb6a9667A'
+deployed_contract_address = '0x11Ef675430096B37aeDa183bc99Ca948CD459213'
 
 with open(compiled_contract_path) as file:
     contract_json = json.load(file)  # load contract info as JSON
@@ -22,5 +22,11 @@ contract = web3.eth.contract(address=deployed_contract_address, abi=contract_abi
 
 # Call contract function (this is not persisted to the blockchain)
 message = contract.functions.sayHello().call()
-
 print(message)
+
+# executes setPayload function
+tx_hash = contract.functions.setPayload('jeferson').transact()
+# waits for the specified transaction (tx_hash) to be confirmed
+# (included in a mined block)
+tx_receipt = web3.eth.waitForTransactionReceipt(tx_hash)
+print('tx_hash: {}'.format(tx_hash.hex()))
